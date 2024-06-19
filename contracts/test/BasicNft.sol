@@ -19,10 +19,8 @@ contract BasicNft is ERC721 {
         s_tokenCounter = s_tokenCounter + 1;
     }
 
-    function tokenURI(uint256 tokenId) public view override returns (string memory) {
+    function tokenURI(uint256 /* tokenId */) public pure override returns (string memory) {
         // require(_exists(tokenId), "ERC721Metadata: URI query for nonexistent token");
-        
-        // _exists 这种方式已经废弃了，需要使用下面的方式实现 _exists （验证 tokenId 是否存在）
         // require(_ownerOf(tokenId) == address(0), "ERC721Metadata: URI query for nonexistent token");
         return TOKEN_URI;
     }
