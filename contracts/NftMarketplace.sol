@@ -4,9 +4,6 @@ pragma solidity ^0.8.7;
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
-// Check out https://github.com/Fantom-foundation/Artion-Contracts/blob/5c90d2bc0401af6fb5abf35b860b762b31dfee02/contracts/FantomMarketplace.sol
-// For a full decentralized nft marketplace
-
 error PriceNotMet(address nftAddress, uint256 tokenId, uint256 price);
 error ItemNotForSale(address nftAddress, uint256 tokenId);
 error NotListed(address nftAddress, uint256 tokenId);
@@ -16,9 +13,9 @@ error NotOwner();
 error NotApprovedForMarketplace();
 error PriceMustBeAboveZero();
 
-// Error thrown for isNotOwner modifier
-// error IsNotOwner()
-
+// https://solidity-by-example.org/hacks/re-entrancy/
+// 引入 ReentrancyGuard 合约，以防止重入攻击
+// 防止因多次调用合约的 withdrawProceeds 函数而导致的重入攻击
 contract NftMarketplace is ReentrancyGuard {
     struct Listing {
         uint256 price;
@@ -80,10 +77,10 @@ contract NftMarketplace is ReentrancyGuard {
         _;
     }
     /*
-     * @notice Method for listing NFT
-     * @param nftAddress Address of NFT contract
-     * @param tokenId Token ID of NFT
-     * @param price sale price for each item
+     * @notice 列出 NFT 的方法
+     * @param nftAddress NFT 合约地址
+     * @param tokenId NFT 的 token ID
+     * @param price NFT 的价格
      */
     function listItem(
         address nftAddress,
@@ -110,9 +107,9 @@ contract NftMarketplace is ReentrancyGuard {
     }
 
     /*
-     * @notice Method for cancelling listing
-     * @param nftAddress Address of NFT contract
-     * @param tokenId Token ID of NFT
+     * @notice 取消 NFT 的列出
+     * @param nftAddress NFT 合约地址
+     * @param tokenId NFT 的 token ID
      */
     function cancelListing(address nftAddress, uint256 tokenId)
         external
@@ -124,41 +121,33 @@ contract NftMarketplace is ReentrancyGuard {
     }
 
     /*
-     * @notice Method for buying listing
-     * @notice The owner of an NFT could unapprove the marketplace,
-     * which would cause this function to fail
-     * Ideally you'd also have a `createOffer` functionality.
-     * @param nftAddress Address of NFT contract
-     * @param tokenId Token ID of NFT
+     * @notice 购买 NFT 的方法
+     * @notice NFT 的拥有者可能不同意被购买此 NFT，理论上还需要有一个 createOffer 的功能
+     * @param nftAddress NFT 合约地址
+     * @param tokenId NFT 的 token ID
      */
     function buyItem(address nftAddress, uint256 tokenId)
         external
         payable
         isListed(nftAddress, tokenId)
-        // isNotOwner(nftAddress, tokenId, msg.sender)
         nonReentrant
     {
-        // Challenge - How would you refactor this contract to take:
-        // 1. Abitrary tokens as payment? (HINT - Chainlink Price Feeds!)
-        // 2. Be able to set prices in other currencies?
-        // 3. Tweet me @PatrickAlphaC if you come up with a solution!
         Listing memory listedItem = s_listings[nftAddress][tokenId];
         if (msg.value < listedItem.price) {
             revert PriceNotMet(nftAddress, tokenId, listedItem.price);
         }
         s_proceeds[listedItem.seller] += msg.value;
-        // Could just send the money...
-        // https://fravoll.github.io/solidity-patterns/pull_over_push.html
+
         delete (s_listings[nftAddress][tokenId]);
         IERC721(nftAddress).safeTransferFrom(listedItem.seller, msg.sender, tokenId);
         emit ItemBought(msg.sender, nftAddress, tokenId, listedItem.price);
     }
 
     /*
-     * @notice Method for updating listing
-     * @param nftAddress Address of NFT contract
-     * @param tokenId Token ID of NFT
-     * @param newPrice Price in Wei of the item
+     * @notice 更新 NFT 的价格
+     * @param nftAddress NFT 合约地址
+     * @param tokenId NFT 的 token ID
+     * @param newPrice NFT 的新价格
      */
     function updateListing(
         address nftAddress,
@@ -170,7 +159,6 @@ contract NftMarketplace is ReentrancyGuard {
         nonReentrant
         isOwner(nftAddress, tokenId, msg.sender)
     {
-        //We should check the value of `newPrice` and revert if it's below zero (like we also check in `listItem()`)
         if (newPrice <= 0) {
             revert PriceMustBeAboveZero();
         }
@@ -179,7 +167,7 @@ contract NftMarketplace is ReentrancyGuard {
     }
 
     /*
-     * @notice Method for withdrawing proceeds from sales
+     * @notice 提取收益
      */
     function withdrawProceeds() external {
         uint256 proceeds = s_proceeds[msg.sender];
@@ -191,9 +179,7 @@ contract NftMarketplace is ReentrancyGuard {
         require(success, "Transfer failed");
     }
 
-    /////////////////////
-    // Getter Functions //
-    /////////////////////
+    // getter functions
 
     function getListing(address nftAddress, uint256 tokenId)
         external
