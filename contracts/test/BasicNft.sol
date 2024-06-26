@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "hardhat/console.sol";
 
 contract BasicNft is ERC721 {
-    string public constant TOKEN_URI = "ipfs://QmVD7wurUDMKwB4yYCDUci2S4fdjJvYvHoupVSZdedxUCY";
+    string public constant TOKEN_URI = "https://white-advanced-flea-956.mypinata.cloud/ipfs/QmPdwViV9rMi2vno4NFHQ1Cfh3cnyPGm5Yxm5ixFp2P5Le";
     uint256 private s_tokenCounter = 0;
 
     event LogMinted(uint256 indexed tokenId);
