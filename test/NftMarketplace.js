@@ -86,20 +86,20 @@ describe("Nft Marketplace Unit Tests", function () {
   describe("buyItem", function () {
       it("reverts if the item isn't listed", async function () {
           await expect(
-              nftMarketplace.buyItem(basicNft.target, TOKEN_ID)
+              nftMarketplace.buyItem(PRICE, basicNft.target, TOKEN_ID)
           ).to.be.revertedWithCustomError(nftMarketplace, 'NotListed').withArgs(basicNft.target, TOKEN_ID)
       })
       it("reverts if the price isn't met", async function () {
           await nftMarketplace.listItem(basicNft.target, TOKEN_ID, PRICE)
           await expect(
-              nftMarketplace.buyItem(basicNft.target, TOKEN_ID)
+              nftMarketplace.buyItem(0, basicNft.target, TOKEN_ID)
           ).to.be.revertedWithCustomError(nftMarketplace, 'PriceNotMet').withArgs(basicNft.target, TOKEN_ID, PRICE)
       })
       it("transfers the nft to the buyer and updates internal proceeds record", async function () {
           await nftMarketplace.listItem(basicNft.target, TOKEN_ID, PRICE)
           nftMarketplace = nftMarketplaceContract.connect(user)
           expect(
-              await nftMarketplace.buyItem(basicNft.target, TOKEN_ID, { value: PRICE })
+              await nftMarketplace.buyItem(PRICE, basicNft.target, TOKEN_ID, { value: PRICE })
           ).to.emit("ItemBought")
           const newOwner = await basicNft.ownerOf(TOKEN_ID)
           const deployerProceeds = await nftMarketplace.getProceeds(deployer.address)
@@ -141,7 +141,7 @@ describe("Nft Marketplace Unit Tests", function () {
       it("withdraws proceeds", async function () {
           await nftMarketplace.listItem(basicNft.target, TOKEN_ID, PRICE)
           nftMarketplace = nftMarketplaceContract.connect(user)
-          await nftMarketplace.buyItem(basicNft.target, TOKEN_ID, { value: PRICE })
+          await nftMarketplace.buyItem(PRICE, basicNft.target, TOKEN_ID, { value: PRICE })
           nftMarketplace = nftMarketplaceContract.connect(deployer)
 
           const deployerProceedsBefore = await nftMarketplace.getProceeds(deployer.address)

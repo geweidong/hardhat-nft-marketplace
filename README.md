@@ -31,5 +31,5 @@ use hardhat to deploy nft marketplace smart contract.
 ## BasicNft
 https://sepolia.etherscan.io/address/0x7F4f3D34EE208985c9A53f2872C1Ee13aA2AF0EC#code
 ## NftMarketplace
-https://sepolia.etherscan.io/address/0xF6B64e86dD5705eC0952B6843ad3809A528BF9C5#code
+https://sepolia.etherscan.io/address/0xc236519289ad7d62780503d521CDb69931Ac2479#code
 

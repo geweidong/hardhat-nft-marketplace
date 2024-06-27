@@ -126,17 +126,17 @@ contract NftMarketplace is ReentrancyGuard {
      * @param nftAddress NFT 合约地址
      * @param tokenId NFT 的 token ID
      */
-    function buyItem(address nftAddress, uint256 tokenId)
+    function buyItem(uint256 price, address nftAddress, uint256 tokenId)
         external
         payable
         isListed(nftAddress, tokenId)
         nonReentrant
     {
         Listing memory listedItem = s_listings[nftAddress][tokenId];
-        if (msg.value < listedItem.price) {
+        if (price < listedItem.price) {
             revert PriceNotMet(nftAddress, tokenId, listedItem.price);
         }
-        s_proceeds[listedItem.seller] += msg.value;
+        s_proceeds[listedItem.seller] += price;
 
         delete (s_listings[nftAddress][tokenId]);
         IERC721(nftAddress).safeTransferFrom(listedItem.seller, msg.sender, tokenId);
