@@ -17,6 +17,8 @@ use hardhat to deploy nft marketplace smart contract.
 `npx hardhat ignition deploy ignition/modules/BasicNft.js --network sepolia --verify`
 `npx hardhat ignition deploy ignition/modules/NftMarketplace.js --network sepolia --verify`
 
+if some eror occur, you can use `yarn clean-local` to clean the cache and try again from complieing to deploy.
+
 # test 测试
 
 `npx hardhat test`
@@ -31,5 +33,5 @@ use hardhat to deploy nft marketplace smart contract.
 ## BasicNft
 https://sepolia.etherscan.io/address/0x7F4f3D34EE208985c9A53f2872C1Ee13aA2AF0EC#code
 ## NftMarketplace
-https://sepolia.etherscan.io/address/0xc236519289ad7d62780503d521CDb69931Ac2479#code
+https://sepolia.etherscan.io/address/0x82b7b7cC7a13829DAE7d8a1648d6bC2662F754E1#code
 

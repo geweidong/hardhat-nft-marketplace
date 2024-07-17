@@ -129,7 +129,7 @@ describe("Nft Marketplace Unit Tests", function () {
           await nftMarketplace.listItem(basicNft.target, TOKEN_ID, PRICE)
           expect(
               await nftMarketplace.updateListing(basicNft.target, TOKEN_ID, updatedPrice)
-          ).to.emit("ItemListed")
+          ).to.emit("ItemUpdateListed")
           const listing = await nftMarketplace.getListing(basicNft.target, TOKEN_ID)
           assert(listing.price.toString() == updatedPrice.toString())
       })
