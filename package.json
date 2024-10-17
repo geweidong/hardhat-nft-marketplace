@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "main": "index.js",
   "repository": "git@github.com:geweidong/hardhat-nft-marketplace.git",
-  "author": "Kirk-Platform-FE <kirk-fe@gate.me>",
   "license": "MIT",
   "scripts": {
     "clean-local": "hardhat clean && rm -rf ignition/deployments"
